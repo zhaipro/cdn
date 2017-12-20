@@ -1,8 +1,10 @@
 # coding: utf-8
 import sqlite3
+import urllib
+import urlparse
 
 from flashtext import KeywordProcessor
-from flask import Flask, g, make_response, abort
+from flask import Flask, g, make_response, abort, redirect, request
 
 import settings
 
@@ -43,8 +45,9 @@ def replace(body):
 def get_page(path):
     if path:
         path = '/' + path
-    sql = u'select type, body from page where path = ? limit 1;'
-    cur = get_db().execute(sql, [path])
+    # 有些脚本是通过参数动态加载的
+    sql = u'select type, body from page where upper(path) = upper(?) and query = ? limit 1;'
+    cur = get_db().execute(sql, [path, request.query_string])
     page = cur.fetchone()
     if page is None:
         abort(404)
@@ -57,7 +60,11 @@ def get_page(path):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def application(path):
-    type, body = get_page(path)
-    resp = make_response(body)
-    resp.content_type = type
+    path = urllib.quote(path.encode('utf-8'))
+    try:
+        type, body = get_page(path)
+        resp = make_response(body)
+        resp.content_type = type
+    except:
+        resp = redirect(urlparse.urljoin(settings.START_URL, path))
     return resp
