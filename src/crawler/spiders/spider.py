@@ -26,7 +26,8 @@ class Spider(scrapy.Spider):
 
         # 爬行
         for href in response.css('a::attr(href)').extract():
-            yield response.follow(href)
+            if self.start_urls[0] in href:
+                yield response.follow(href)
 
     def dump(self, response):
         yield Page(url=response.url, type=response.headers['Content-Type'], body=response.body)
