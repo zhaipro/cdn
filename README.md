@@ -15,3 +15,9 @@ $
 $ sqlite3 webpage.db 'select count(*) from page;'
 39536
 $
+$ make runserver
+export FLASK_DEBUG=1 FLASK_APP=app.py; flask run
+...
+127.0.0.1 - - [28/Sep/2018 08:35:26] "GET / HTTP/1.1" 200 -
+...
+```
