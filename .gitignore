@@ -1,0 +1,4 @@
+*.pyc
+db.*
+requests.*
+spider.state
