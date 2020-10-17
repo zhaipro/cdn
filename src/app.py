@@ -11,8 +11,18 @@ import settings
 app = Flask(__name__)
 
 
+def _str(s):
+    try:
+        return s.decode('utf-8')
+    except:
+        return s
+
+
 def connect_db():
-    return sqlite3.connect('webpage.db')
+    rv = sqlite3.connect(settings.DATABASE)
+    rv.text_factory = _str
+    rv.row_factory = sqlite3.Row
+    return rv
 
 
 @app.teardown_appcontext
@@ -66,3 +76,11 @@ def application(path):
     except:
         resp = redirect(urllib.parse.urljoin(settings.START_URL, path))
     return resp
+
+
+if __name__ == '__main__':
+    host = settings.NETLOC
+    port = 80
+    if ':' in host:
+        host, port = host.split(':')
+    app.run(host=host, port=port)

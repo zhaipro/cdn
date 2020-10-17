@@ -2,3 +2,4 @@
 webpage.db*
 requests.*
 spider.state
+*.sqlite
