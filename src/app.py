@@ -1,4 +1,5 @@
 # coding: utf-8
+import random
 import sqlite3
 import urllib
 
@@ -48,6 +49,19 @@ def replace(body):
     return g.keyword_processor.replace_keywords(body)
 
 
+def get_random():
+    db = get_db()
+    if not hasattr(get_random, 'c'):
+        get_random.c = db.execute('select count(*) from page where type = "image/jpeg" and netloc = ?;', [settings.START_URL[7:]]).fetchone()[0]
+    sql = 'select body from page where type = "image/jpeg" and netloc = ? limit 1 offset ?;'
+    while True:
+        x = random.randint(0, get_random.c - 1)
+        body, = db.execute(sql, [settings.START_URL[7:], x]).fetchone()
+        if len(body) > 20 * 1024:
+            break
+    return body
+
+
 def get_page(path):
     if path:
         path = '/' + path
@@ -69,6 +83,17 @@ def get_page(path):
 @app.route('/<path:path>')
 def application(path):
     path = urllib.parse.quote(path)
+    if path == 'random.html':
+        with open('random.html', encoding='utf-8') as fp:
+            body = fp.read()
+        resp = make_response(body)
+        resp.connect_type = 'text/html; charset=UTF-8'
+        return resp
+    if path == 'random':
+        body = get_random()
+        resp = make_response(body)
+        resp.content_type = 'image/jpeg'
+        return resp
     try:
         _type, body = get_page(path)
         resp = make_response(body)

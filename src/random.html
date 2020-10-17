@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>通过定时器实现图片的自动切换和关闭效果</title>
+	<style type="text/css">
+		#pic{
+			height:700px;
+			/*width:433px;*/
+		}
+	</style>
+	<script type="text/javascript">
+		function main(){
+			console.log("ha");
+			var timer;  //定义定时器变量
+			var pic=document.getElementById("pic");
+			timer=setInterval(function(){
+				pic.src="http://192.168.1.4/random";
+			}, 3 * 1000);
+		};
+	</script>
+</head>
+<body onload="main()">
+	<img src="http://192.168.1.4/random" id="pic"/>
+</body>
+</html>
