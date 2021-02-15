@@ -1,26 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>通过定时器实现图片的自动切换和关闭效果</title>
-	<style type="text/css">
-		#pic{
-			height:700px;
-			/*width:433px;*/
-		}
-	</style>
-	<script type="text/javascript">
-		function main(){
-			console.log("ha");
-			var timer;  //定义定时器变量
-			var pic=document.getElementById("pic");
-			timer=setInterval(function(){
-				pic.src="http://192.168.1.4/random";
-			}, 3 * 1000);
-		};
-	</script>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>随机展示</title>
+    <style>
+        .container {
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            position: absolute;
+        }
+    </style>
+    <script type="text/javascript">
+        function main(){
+            var pic=document.getElementById("pic");
+            var a_pic = document.getElementById("a_pic");
+            setInterval(function(){
+                var r = Math.random()
+                pic.src="/images?x=" + r;
+                a_pic.href = "/images?x=" + r;
+            }, 3 * 1000);
+        };
+    </script>
 </head>
-<body onload="main()">
-	<img src="http://192.168.1.4/random" id="pic"/>
+<body onload="main()" bgcolor="#0f0f0f">
+    <dev class="container">
+        <a id="a_pic" href="/images" target="_blank">
+            <img src="/images" id="pic" height="99.6%"/>
+        </a>
+    </dev>
 </body>
 </html>

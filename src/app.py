@@ -49,16 +49,21 @@ def replace(body):
     return g.keyword_processor.replace_keywords(body)
 
 
-def get_random():
+def get_image(x=None):
     db = get_db()
-    if not hasattr(get_random, 'c'):
-        get_random.c = db.execute('select count(*) from page where type = "image/jpeg" and netloc = ?;', [settings.START_URL[7:]]).fetchone()[0]
-    sql = 'select body from page where type = "image/jpeg" and netloc = ? limit 1 offset ?;'
-    while True:
-        x = random.randint(0, get_random.c - 1)
-        body, = db.execute(sql, [settings.START_URL[7:], x]).fetchone()
-        if len(body) > 20 * 1024:
-            break
+    if not hasattr(get_image, 'c'):
+        sql = 'select count(*) from page where type = "image/jpeg" and length(body) > 20 * 1024 and netloc = ?;'
+        get_image.c = db.execute(sql, [settings.START_URL[7:]]).fetchone()[0]
+    sql = 'select body from page where type = "image/jpeg" and length(body) > 20 * 1024 and netloc = ? limit 1 offset ?;'
+    if x is None:               # 纯随机
+        x = random.random() * 0.9999999
+    elif isinstance(x, str):
+        x = float(x)
+    if x >= 1:
+        x = int(x - 1) % get_image.c
+    else:
+        x = int(x * get_image.c)
+    body, = db.execute(sql, [settings.START_URL[7:], x]).fetchone()
     return body
 
 
@@ -89,8 +94,9 @@ def application(path):
         resp = make_response(body)
         resp.connect_type = 'text/html; charset=UTF-8'
         return resp
-    if path == 'random':
-        body = get_random()
+    if path == 'images':
+        x = request.args.get('x')
+        body = get_image(x=x)
         resp = make_response(body)
         resp.content_type = 'image/jpeg'
         return resp
