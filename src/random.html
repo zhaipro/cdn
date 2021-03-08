@@ -3,33 +3,44 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>随机展示</title>
-    <style>
-        .container {
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            position: absolute;
-        }
-    </style>
     <script type="text/javascript">
-        function main(){
-            var pic=document.getElementById("pic");
-            var a_pic = document.getElementById("a_pic");
+        function init() {
+            var t = 3;
+            if(location.search) {
+                t = parseInt(location.search.substring(1));
+            }
             setInterval(function(){
-                var r = Math.random()
-                pic.src="/images?x=" + r;
-                a_pic.href = "/images?x=" + r;
-            }, 3 * 1000);
+                var r = Math.random();
+                img.src="/images?x=" + r;
+                a.href = "/images?x=" + r;
+            }, t * 1000);
         };
+        function img_onload() {
+            var p = img.height / img.width;
+            var q = window.innerHeight / window.innerWidth;
+            if(p < q) {
+                var s = 100 * (1 - p / q);
+                a.style.left = 0;
+                a.style.top = s / 2 + "%";
+                a.style.width = "100%";
+                a.style.height = (100 - s) + "%";
+                img.style.height = "";
+                img.style.width = "100%";
+            } else {
+                var s = 100 * (1 - q / p);
+                a.style.left = s / 2 + "%";
+                a.style.top = 0;
+                a.style.width = (100 - s) + "%";
+                a.style.height = "100%";
+                img.style.height = "100%";
+                img.style.width = "";
+            }
+        }
     </script>
 </head>
-<body onload="main()" bgcolor="#0f0f0f">
-    <dev class="container">
-        <a id="a_pic" href="/images" target="_blank">
-            <img src="/images" id="pic" height="99.6%"/>
-        </a>
-    </dev>
+<body onload="init()" bgcolor="#0f0f0f">
+    <a id="a" target="_blank" style="position: absolute">
+        <img src="/images" id="img" onload="img_onload()" />
+    </a>
 </body>
 </html>
